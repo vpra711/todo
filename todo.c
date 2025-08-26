@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
 
 void load_file();
 void save_file();
@@ -35,6 +37,9 @@ int main(int argc, char *argv[])
 				break;
 			case 3:
 				display();
+				break;
+			default:
+				return 1;
 		}
 	}
 	return 0;
@@ -48,6 +53,11 @@ void create_new_file()
 		printf("\nfile creation failed");
 		return;
 	}
+
+	time_t t = time(NULL);
+	struct tm *current_time = localtime(&t);
+	char *username = getlogin();
+	fprintf(file, "#created by %s on %d-%d-%d at %d:%d:%d", username, current_time->tm_year, current_time->tm_mon, current_time->tm_mday, current_time->tm_hour, current_time->tm_min, current_time->tm_sec);
 	fclose(file);
 }
 
