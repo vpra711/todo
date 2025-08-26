@@ -1,32 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void load_file(char *filename);
-void save_file(char *filename);
+void load_file();
+void save_file();
 void display();
 
 char *buffer;
+char *filename;
 
-int main()
+int main(int argc, char *argv[])
 {
 	int operation = 0;
-	char filename[50];
+	if (argc != 2)
+	{
+		printf("\ninvalid input");
+		return 0;
+	}
+
+	filename = argv[1];
+
 	while(1)
 	{
 		operation = 0;
+		printf("\nwaiting for operation: ");
 		scanf("%d", &operation);
 
 		switch(operation)
 		{
 			case 1:
-				printf("\nenter file to load: ");
-				scanf("%s", filename);
-				load_file(filename);
+				load_file();
 				break;
 			case 2:
-				printf("\nenter file to write: ");
-				scanf("%s", filename);
-				save_file(filename);
+				save_file();
 				break;
 			case 3:
 				display();
@@ -35,12 +40,34 @@ int main()
 	return 0;
 }
 
-void load_file(char *filename)
+void create_new_file()
+{
+	FILE *file = fopen(filename, "w");
+	if (file == NULL)
+	{
+		printf("\nfile creation failed");
+		return;
+	}
+	fclose(file);
+}
+
+void load_file()
 {
 	FILE *file = fopen(filename, "r");
 	if (file == NULL)
 	{
+		char confirmation;
 		printf("\nunable to open the file in read mode");
+		printf("\ncreate new one? y or n: ");
+		scanf("%c", &confirmation);
+		if (confirmation == '\n')
+		{
+			scanf("%c", &confirmation);
+		}
+		if (confirmation == 'y')
+		{
+			create_new_file();
+		}
 		return;
 	}
 
@@ -65,7 +92,7 @@ void load_file(char *filename)
 	fclose(file);
 }
 
-void save_file(char *filename)
+void save_file()
 {
 	FILE *file = fopen(filename, "w");
 	if (file == NULL)
