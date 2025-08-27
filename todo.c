@@ -2,13 +2,12 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
-#include <errno.h>
-#include <string.h>
 #include <pwd.h>
 
 void load_file();
 void save_file();
 void display();
+void print_options();
 
 char *buffer;
 char *filename;
@@ -27,6 +26,7 @@ int main(int argc, char *argv[])
 	while(1)
 	{
 		operation = 0;
+		print_options();
 		printf("\nwaiting for operation: ");
 		scanf("%d", &operation);
 
@@ -61,8 +61,11 @@ void create_new_file()
 	struct tm *current_time = localtime(&t);
 	uid_t uid = getuid();
 	struct passwd *pass = getpwuid(uid);
-	char *username = pass->pw_name;
-	fprintf(file, "#created by %s on %d-%d-%d at %d:%d:%d", username, current_time->tm_year, current_time->tm_mon, current_time->tm_mday, current_time->tm_hour, current_time->tm_min, current_time->tm_sec);
+	int status = fprintf(file, "#created by %s on %d-%d-%d at %d:%d:%d", pass->pw_name, current_time->tm_year, current_time->tm_mon, current_time->tm_mday, current_time->tm_hour, current_time->tm_min, current_time->tm_sec);
+	if (status < 0)
+	{
+		printf("file writing opeartion failed");
+	}
 	fclose(file);
 }
 
@@ -136,4 +139,13 @@ void display()
 	}
 
 	printf("%s", buffer);
+}
+
+void print_options()
+{
+	char options[] = "\n1. load"
+	"\n2. save"
+	"\n3. display";
+
+	printf("%s", options);
 }
