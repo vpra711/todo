@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <pwd.h>
 
 void load_file();
 void save_file();
@@ -56,7 +59,9 @@ void create_new_file()
 
 	time_t t = time(NULL);
 	struct tm *current_time = localtime(&t);
-	char *username = getlogin();
+	uid_t uid = getuid();
+	struct passwd *pass = getpwuid(uid);
+	char *username = pass->pw_name;
 	fprintf(file, "#created by %s on %d-%d-%d at %d:%d:%d", username, current_time->tm_year, current_time->tm_mon, current_time->tm_mday, current_time->tm_hour, current_time->tm_min, current_time->tm_sec);
 	fclose(file);
 }
